@@ -45,6 +45,18 @@ public class Main {
     }
 
     @SneakyThrows
+    private static void completableFuture1(HelloService helloService) {
+        // A new Thread is created not taken from Java thread-pool
+        final ExecutorService myThreadPool = Executors.newSingleThreadExecutor();
+        final CompletableFuture<Void> executeDeletion = CompletableFuture.runAsync(() -> {
+
+            helloService.sayHello();
+        }, myThreadPool);
+
+        executeDeletion.get(10, SECONDS);
+    }
+
+    @SneakyThrows
     private static void completableFuture2(HelloService helloService) {
         // A new Thread is created not taken from Java thread-pool
         final ExecutorService myThreadPool = Executors.newSingleThreadExecutor();
@@ -60,7 +72,7 @@ public class Main {
     private static void completableFuture3(HelloService helloService) {
         // A new Thread is created not taken from Java thread-pool
         final ExecutorService myThreadPool2 = Executors.newFixedThreadPool(4);
-        System.out.println("Main ThreadName=" + Thread.currentThread().getName());
+         System.out.println("Main ThreadName=" + Thread.currentThread().getName());
         final Future<ExecutorService> submit = myThreadPool2.submit(() -> {
             System.out.println("In Lambda ThreadName=" + Thread.currentThread().getName());
 
@@ -95,7 +107,7 @@ public class Main {
 
     @SneakyThrows
     private static void forkJoinTask(HelloService helloService) {
-        // Default thread-pool of Java ~(2*CPU-1)
+        // Default thread-pool of Java ~(#CPU-1)
         // parallelStream is using by default Default thread-pool of Java
         ForkJoinTask forkJoinPool = ForkJoinPool.commonPool()
                 .submit(() -> {

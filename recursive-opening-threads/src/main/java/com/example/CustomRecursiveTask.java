@@ -25,7 +25,7 @@ public class CustomRecursiveTask extends RecursiveTask<Integer> {
                     .stream()
                     .mapToInt(customRecursiveTask -> {
                         try {
-                            return customRecursiveTask.get();    // a btter way to user customRecursiveTask.join since it doesn't throw exception
+                            return customRecursiveTask.get();    // a better way to user customRecursiveTask.join since it doesn't throw exception
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {

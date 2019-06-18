@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>completable-future</module>
-        <module>stack</module>
+        <module>recursive-opening-threads</module>
     </modules>
 
     <properties>

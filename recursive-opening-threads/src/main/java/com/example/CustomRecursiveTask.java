@@ -10,34 +10,36 @@ import java.util.concurrent.*;
 
 @Slf4j
 public class CustomRecursiveTask extends RecursiveTask<Integer> {
-    private int[] arr;
-
     private static final int THRESHOLD = 2;
+    private int[] array;
 
-    public CustomRecursiveTask(int[] arr) {
-        this.arr = arr;
+
+    public CustomRecursiveTask(int[] array) {
+        this.array = array;
     }
 
     @Override
     protected Integer compute() {
-        if (arr.length > THRESHOLD) {
-            int sum = ForkJoinTask.invokeAll(createSubtasks(arr))
+        if (array.length > THRESHOLD) {
+            int sum = ForkJoinTask.invokeAll(createSubtasks(array))
                     .stream()
-                    .mapToInt(customRecursiveTask -> {
-                        try {
-                            return customRecursiveTask.get();    // a better way to user customRecursiveTask.join since it doesn't throw exception
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                        return 0;
-                    })
+                    .mapToInt(
+                            CustomRecursiveTask::join
+//                    customRecursiveTask -> {
+//                        try {
+//                            return customRecursiveTask.get();    // a better way to user CustomRecursiveTask::join since it doesn't throw exception
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        } catch (ExecutionException e) {
+//                            e.printStackTrace();
+//                        }
+//                        return 0;
+                    )
                     .sum();
-            System.out.println(Thread.currentThread().getName() + Arrays.toString(arr) + " This sum - (" + sum + ") - was processed.");
+            System.out.println(Thread.currentThread().getName() + Arrays.toString(array) + " This sum - (" + sum + ") - was processed.");
             return sum;
         } else {
-            return processing(arr);
+            return processing(array);
         }
     }
 

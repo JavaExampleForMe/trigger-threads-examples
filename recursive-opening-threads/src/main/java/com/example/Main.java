@@ -1,5 +1,4 @@
-import com.example.CustomCallable;
-import com.example.CustomRecursiveTask;
+package com.example;
 
 import java.util.concurrent.ForkJoinPool;
 
@@ -13,15 +12,16 @@ public class Main {
         customCallable.call();
 
 
+        System.out.println("One thread pool is open ");
         ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-//        CustomRecursiveTask customRecursiveTask = new CustomRecursiveTask(myArray);
+        CustomRecursiveTask customRecursiveTask = new CustomRecursiveTask(myArray);
 //        // One way to execute
-//        forkJoinPool.execute(customRecursiveTask);
-//        int result1 = customRecursiveTask.join();
-//
-//
-//        // Two way to execute
-//        int result2 = forkJoinPool.invoke(customRecursiveTask);
+        forkJoinPool.execute(customRecursiveTask);
+       customRecursiveTask.join();
+
+
+        // Two way to execute
+       forkJoinPool.invoke(customRecursiveTask);
 
 
 

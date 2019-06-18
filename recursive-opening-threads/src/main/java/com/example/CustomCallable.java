@@ -16,12 +16,12 @@ public class CustomCallable implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         if (array.length > THRESHOLD) {
-            List<Callable<Integer>> dividedTasks = createSubtasks();
+            List<Callable<Integer>> dividedTasks = createSubtasks(array);
             ExecutorService executorService = Executors.newFixedThreadPool(2);
             int sum = executorService.invokeAll(dividedTasks).stream()
-                    .mapToInt(value -> {
+                    .mapToInt(feature -> {
                         try {
-                            return value.get();
+                            return feature.get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
@@ -34,11 +34,12 @@ public class CustomCallable implements Callable<Integer> {
             System.out.println(Thread.currentThread().getName() + Arrays.toString(array) + " This sum - (" + sum + ") - was processed.");
             return sum;
         }
-        else
+        else {
             return processing(array);
+        }
     }
 
-    private List<Callable<Integer>> createSubtasks() {
+    private List<Callable<Integer>> createSubtasks(int[] array) {
         int[] arr1 = Arrays.copyOfRange(array, 0, array.length / 2);
         int[] arr2 = Arrays.copyOfRange(array, array.length / 2, array.length);
         List<Callable<Integer>> dividedTasks = new ArrayList<>();

@@ -20,8 +20,12 @@ public class CustomRecursiveTask extends RecursiveTask<Integer> {
 
     @Override
     protected Integer compute() {
+        int sum = 0;
+        ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+        log.debug(" start [{}] ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) ,
+                forkJoinPool.getActiveThreadCount(), forkJoinPool.getRunningThreadCount(), forkJoinPool.getPoolSize(), forkJoinPool.getParallelism());
         if (array.length > THRESHOLD) {
-            int sum = ForkJoinTask.invokeAll(createSubtasks(array))
+            sum = ForkJoinTask.invokeAll(createSubtasks(array))
                     .stream()
                     .mapToInt(
                             CustomRecursiveTask::join
@@ -36,11 +40,12 @@ public class CustomRecursiveTask extends RecursiveTask<Integer> {
 //                        return 0;
                     )
                     .sum();
-            System.out.println(Thread.currentThread().getName() + Arrays.toString(array) + " This sum - (" + sum + ") - was processed.");
-            return sum;
         } else {
-            return processing(array);
+            sum = processing(array);
         }
+        log.debug(" sum[{}]={} ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) , sum ,
+                forkJoinPool.getActiveThreadCount(), forkJoinPool.getRunningThreadCount(), forkJoinPool.getPoolSize(), forkJoinPool.getParallelism());
+        return sum;
     }
 
     private Collection<CustomRecursiveTask> createSubtasks(int[] array) {

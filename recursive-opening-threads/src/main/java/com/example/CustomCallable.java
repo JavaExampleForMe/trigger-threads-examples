@@ -1,24 +1,30 @@
 package com.example;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
+@Slf4j
 public class CustomCallable implements Callable<Integer> {
     private static final int THRESHOLD = 2;
     private int[] array;
+    private ExecutorService executorService;
 
-    public CustomCallable(int[] array) {
+    public CustomCallable(int[] array, ExecutorService executorService) {
         this.array = array;
+        this.executorService = executorService;
     }
 
     @Override
     public Integer call() throws Exception {
+        int sum = 0;
+        log.debug(" start [{}] ", Arrays.toString(array) );
         if (array.length > THRESHOLD) {
-            List<Callable<Integer>> dividedTasks = createSubtasks(array);
-            ExecutorService executorService = Executors.newFixedThreadPool(2);
-            int sum = executorService.invokeAll(dividedTasks).stream()
+            List<Callable<Integer>> dividedTasks = createSubtasks(array, executorService);
+            sum = executorService.invokeAll(dividedTasks).stream()
                     .mapToInt(feature -> {
                         try {
                             return feature.get();
@@ -30,28 +36,25 @@ public class CustomCallable implements Callable<Integer> {
                         return 0;
                     })
                     .sum();
-            executorService.shutdownNow();
-            System.out.println(Thread.currentThread().getName() + Arrays.toString(array) + " This sum - (" + sum + ") - was processed.");
-            return sum;
+       } else {
+            sum = processing(array);
         }
-        else {
-            return processing(array);
-        }
+        log.debug(" sum[{}]={} ", Arrays.toString(array) ,sum);
+        return sum;
     }
 
-    private List<Callable<Integer>> createSubtasks(int[] array) {
+    private List<Callable<Integer>> createSubtasks(int[] array, ExecutorService executorService) {
         int[] arr1 = Arrays.copyOfRange(array, 0, array.length / 2);
         int[] arr2 = Arrays.copyOfRange(array, array.length / 2, array.length);
         List<Callable<Integer>> dividedTasks = new ArrayList<>();
-        dividedTasks.add(new CustomCallable(arr1));
-        dividedTasks.add(new CustomCallable(arr2));
+        dividedTasks.add(new CustomCallable(arr1, executorService));
+        dividedTasks.add(new CustomCallable(arr2, executorService));
         return dividedTasks;
     }
 
     private Integer processing(int[] array) {
         int result = Arrays.stream(array)
                 .sum();
-        System.out.println(Thread.currentThread().getName() + Arrays.toString(array) + " result - (" + result + ") - was processed.");
         return result;
     }
 }

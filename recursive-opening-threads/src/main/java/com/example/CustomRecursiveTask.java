@@ -22,7 +22,7 @@ public class CustomRecursiveTask extends RecursiveTask<Integer> {
     protected Integer compute() {
         int sum = 0;
         ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-        log.debug(" start [{}] ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) ,
+        log.debug("Task started [{}] ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) ,
                 forkJoinPool.getActiveThreadCount(), forkJoinPool.getRunningThreadCount(), forkJoinPool.getPoolSize(), forkJoinPool.getParallelism());
         if (array.length > THRESHOLD) {
             sum = ForkJoinTask.invokeAll(createSubtasks(array))
@@ -43,7 +43,7 @@ public class CustomRecursiveTask extends RecursiveTask<Integer> {
         } else {
             sum = processing(array);
         }
-        log.debug(" sum[{}]={} ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) , sum ,
+        log.debug("Task ended sum[{}]={} ActiveThreadCount={}, RunningThreadCount={}, PoolSize={}, Parallelism={}", Arrays.toString(array) , sum ,
                 forkJoinPool.getActiveThreadCount(), forkJoinPool.getRunningThreadCount(), forkJoinPool.getPoolSize(), forkJoinPool.getParallelism());
         return sum;
     }

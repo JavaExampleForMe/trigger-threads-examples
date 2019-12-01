@@ -21,7 +21,9 @@ public class CustomCallable implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         int sum = 0;
-        log.debug(" start [{}] ", Arrays.toString(array) );
+        Thread.currentThread().getThreadGroup().list();
+
+        log.debug("Thread started, threadId={}  threadName={} activeCount={} array=[{}] ", Thread.currentThread().getId(), Thread.currentThread().getName(), Thread.activeCount(), Arrays.toString(array) );
         if (array.length > THRESHOLD) {
             List<Callable<Integer>> dividedTasks = createSubtasks(array, executorService);
             sum = executorService.invokeAll(dividedTasks).stream()
@@ -39,7 +41,7 @@ public class CustomCallable implements Callable<Integer> {
        } else {
             sum = processing(array);
         }
-        log.debug(" sum[{}]={} ", Arrays.toString(array) ,sum);
+        log.debug("Thread ended, threadId={}  sum[{}]={} ", Thread.currentThread().getId(), Arrays.toString(array) ,sum);
         return sum;
     }
 

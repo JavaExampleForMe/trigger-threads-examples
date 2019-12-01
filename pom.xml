@@ -11,6 +11,7 @@
     <modules>
         <module>completable-future</module>
         <module>recursive-opening-threads</module>
+        <module>daemon</module>
     </modules>
 
     <properties>
